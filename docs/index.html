@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AppAtlas — map every screen of any app</title>
+<title>AppAtlas: map every screen of any app</title>
 <meta name="description" content="A Claude Code skill and plugin that walks any web or mobile app end to end and produces a browsable atlas: screenshots, flow recordings, and behavior specs.">
-<meta property="og:title" content="AppAtlas — map every screen of any app">
+<meta property="og:title" content="AppAtlas: map every screen of any app">
 <meta property="og:description" content="Automated end-to-end app walkthroughs: screenshots, flow recordings, behavior specs, and a Mobbin-style browsable atlas.">
 <meta property="og:image" content="assets/hero-gallery-dark.png">
 <meta property="og:type" content="website">
@@ -14,15 +14,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* atlas — deep chart ink + a single survey-orange signal */
+  /* atlas: deep chart ink + a single nautical-chart magenta signal */
   --bg:#0D1216; --panel:#151C22; --panel-2:#101720; --ink:#ECEFF2; --muted:#98A4AF;
-  --line:#232E37; --accent:#F0663C; --accent-ink:#160A05; --grid:rgba(240,102,60,.10);
+  --line:#232E37; --accent:#EC4E86; --accent-ink:#1A0710; --grid:rgba(236,78,134,.10);
   --sans:"Schibsted Grotesk",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
   --z-nav:100;
 }
 @media (prefers-color-scheme: light){:root{
   --bg:#F3F4F2; --panel:#FFFFFF; --panel-2:#FAFAF8; --ink:#151A1E; --muted:#57616A;
-  --line:#E1E4E1; --accent:#BC461F; --accent-ink:#FFFFFF; --grid:rgba(188,70,31,.08);
+  --line:#E1E4E1; --accent:#C42367; --accent-ink:#FFFFFF; --grid:rgba(196,35,103,.07);
 }}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -91,7 +91,7 @@ section{padding:88px 0 0}
 h2{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.025em;font-weight:700;margin:0 0 12px;text-wrap:balance;line-height:1.05}
 .lead{color:var(--muted);font-size:17px;margin:0;text-wrap:pretty}
 
-/* features as a MAP LEGEND — asymmetric, mono markers, no cards-with-emoji */
+/* features as a MAP LEGEND: asymmetric, mono keys, no emoji cards */
 .legend{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;
   grid-template-columns:repeat(6,1fr)}
 .entry{background:var(--panel);padding:26px 24px;display:flex;flex-direction:column;gap:9px}
@@ -113,15 +113,13 @@ h2{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.025em;font-weight:700;margi
 .pill{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);
   border-radius:7px;padding:5px 11px;background:var(--panel)}
 
-/* how it works — a genuine ordered route, so the numbers are earned */
+/* how it works: an ordered route, sequence carried by the connected rail + order */
 .route{margin-top:40px;display:grid;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.stop{display:grid;grid-template-columns:70px 1fr;gap:0;border-bottom:1px solid var(--line);background:var(--panel)}
+.stop{border-bottom:1px solid var(--line);background:var(--panel)}
 .stop:last-child{border-bottom:0}
-.stop .n{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--accent);padding:22px 0 0 24px;
-  border-right:1px solid var(--line)}
-.stop .b{padding:20px 24px}
-.stop .b b{display:block;font-size:17px;font-weight:600;margin-bottom:3px;letter-spacing:-.01em}
-.stop .b span{color:var(--muted);font-size:14.5px;text-wrap:pretty}
+.stop .b{padding:22px 26px;position:relative}
+.stop .b b{display:block;font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-.01em;color:var(--accent)}
+.stop .b span{color:var(--muted);font-size:14.5px;text-wrap:pretty;display:block;max-width:70ch}
 
 /* install */
 .two{display:grid;gap:20px;grid-template-columns:1fr 1fr;margin-top:8px}
@@ -176,12 +174,6 @@ footer .brand{font-size:15px}
       <a class="btn primary" href="#install">Install the plugin</a>
       <a class="btn secondary" href="https://github.com/sleepyw33kday/appatlas">★ Star on GitHub</a>
     </div>
-    <div class="scale reveal">
-      <div><b>350</b><span>screens in one run</span></div>
-      <div><b>13</b><span>sections mapped</span></div>
-      <div><b>web + app</b><span>iOS, Android</span></div>
-      <div><b>1 file</b><span>self-contained atlas</span></div>
-    </div>
   </div>
 
   <div class="plate reveal">
@@ -189,9 +181,15 @@ footer .brand{font-size:15px}
     <img src="assets/hero-gallery-dark.png" alt="The AppAtlas browsable gallery: a filterable grid of 350 captured app screens beside a collapsible app-structure tree">
   </div>
 
+  <div class="scale">
+    <div><b>350</b><span>screens in one run</span></div>
+    <div><b>13</b><span>sections mapped</span></div>
+    <div><b>web + app</b><span>iOS, Android</span></div>
+    <div><b>1 file</b><span>self-contained atlas</span></div>
+  </div>
+
   <section id="legend">
     <div class="shead">
-      <span class="tag mono">THE LEGEND</span>
       <h2 class="reveal">Not a pile of screenshots. A structured atlas.</h2>
       <p class="lead reveal">Every section gets a behavior spec covering each control, empty state, and gated screen, cross-linked to the exact captures. Read it like a map key.</p>
     </div>
@@ -232,8 +230,7 @@ footer .brand{font-size:15px}
   <section>
     <div class="split">
       <div>
-        <span class="tag mono">NAVIGATE</span>
-        <h2 class="reveal" style="margin-top:16px">Filter it like a chart table.</h2>
+        <h2 class="reveal">Filter it like a chart table.</h2>
         <p class="lead reveal">The app's real structure becomes a collapsible tree: nav group, page, sub-tab, modal. Click a node to filter the gallery, search across every screen, and pop any capture into a lightbox with its spec beside it.</p>
         <div class="pills reveal">
           <span class="pill">app tree</span><span class="pill">live search</span><span class="pill">lightbox</span><span class="pill">embedded specs</span><span class="pill">light + dark</span>
@@ -246,8 +243,7 @@ footer .brand{font-size:15px}
   <section>
     <div class="split flip">
       <div>
-        <span class="tag mono">RECORD</span>
-        <h2 class="reveal" style="margin-top:16px">Key moments, captured on the way through.</h2>
+        <h2 class="reveal">Key moments, captured on the way through.</h2>
         <p class="lead reveal">A record drill-down, a generation completing: the moments worth watching become short GIFs during the crawl, not a manual re-run afterward.</p>
       </div>
       <img class="reveal" src="assets/demo-flow.gif" alt="A recorded flow: opening a response, viewing its detail, toggling brand-name highlighting, and switching to citations">
@@ -256,21 +252,19 @@ footer .brand{font-size:15px}
 
   <section id="route">
     <div class="shead">
-      <span class="tag mono">THE ROUTE</span>
       <h2 class="reveal">How a walk runs</h2>
       <p class="lead reveal">An orchestration pattern, not just a prompt, with a blocker playbook for the things that derail automated crawls.</p>
     </div>
     <div class="route reveal">
-      <div class="stop"><div class="n">01</div><div class="b"><b>Recon</b><span>Claude signs in, walks onboarding capturing every step, maps the full navigation, and writes an agent briefing plus a folder skeleton.</span></div></div>
-      <div class="stop"><div class="n">02</div><div class="b"><b>Crawl</b><span>One subagent per section, sequential per UI surface (a browser tab or a simulator is shared, so parallel agents would fight over it). Each captures and specs its section.</span></div></div>
-      <div class="stop"><div class="n">03</div><div class="b"><b>Review, fix, coverage audit</b><span>Parallel QA agents verify every screenshot against its spec, then a feature-level audit fills the gaps that hide in menus, dialogs, and scoped route twins.</span></div></div>
-      <div class="stop"><div class="n">04</div><div class="b"><b>Atlas</b><span>A generator assembles the self-contained browsable index, the thing you actually share.</span></div></div>
+      <div class="stop"><div class="b"><b>Recon</b><span>Claude signs in, walks onboarding capturing every step, maps the full navigation, and writes an agent briefing plus a folder skeleton.</span></div></div>
+      <div class="stop"><div class="b"><b>Crawl</b><span>One subagent per section, sequential per UI surface (a browser tab or a simulator is shared, so parallel agents would fight over it). Each captures and specs its section.</span></div></div>
+      <div class="stop"><div class="b"><b>Review, fix, coverage audit</b><span>Parallel QA agents verify every screenshot against its spec, then a feature-level audit fills the gaps that hide in menus, dialogs, and scoped route twins.</span></div></div>
+      <div class="stop"><div class="b"><b>Atlas</b><span>A generator assembles the self-contained browsable index, the thing you actually share.</span></div></div>
     </div>
   </section>
 
   <section id="install">
     <div class="shead">
-      <span class="tag mono">SET OUT</span>
       <h2 class="reveal">Install</h2>
       <p class="lead reveal">This repo is its own Claude Code plugin marketplace.</p>
     </div>
