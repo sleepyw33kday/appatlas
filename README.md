@@ -8,7 +8,9 @@
 
 Works on **web apps** (via the Claude-in-Chrome tools) and **iOS / Android apps** (via the Xcode simulator or Android emulator).
 
-[Install](#install) · [What you get](#what-you-get) · [How it works](#how-it-works) · [Example output](#example-output) · [Docs](https://sleepyw33kday.github.io/appatlas/)
+**[▶ Explore a live atlas](https://sleepyw33kday.github.io/appatlas/example/)** &nbsp;·&nbsp; [Landing page](https://sleepyw33kday.github.io/appatlas/) &nbsp;·&nbsp; [Install](#install) &nbsp;·&nbsp; [How it works](#how-it-works)
+
+> The live atlas above is a real, explorable AppAtlas output: 350 screens of a production SaaS, with the collapsible app-structure tree, live filtering, search, and per-section behavior specs.
 
 ![AppAtlas gallery](assets/hero-gallery-dark.png)
 

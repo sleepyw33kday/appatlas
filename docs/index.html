@@ -78,11 +78,14 @@ h1 .swap{color:var(--accent)}
 .scale span{font-size:13px;color:var(--muted)}
 
 /* framed screenshot plate */
-.plate{margin-top:44px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel-2);
-  box-shadow:0 30px 90px -46px rgba(0,0,0,.7)}
+.plate{display:block;margin-top:44px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel-2);
+  box-shadow:0 30px 90px -46px rgba(0,0,0,.7);text-decoration:none;transition:border-color .18s,transform .18s cubic-bezier(.2,.8,.2,1)}
+a.plate:hover{border-color:var(--accent);transform:translateY(-3px)}
+a.plate:hover .open{opacity:1}
 .plate .bar{display:flex;align-items:center;gap:7px;padding:11px 15px;border-bottom:1px solid var(--line);background:var(--panel)}
 .plate .bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:block}
 .plate .bar .lbl{margin-left:10px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.plate .bar .open{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);opacity:.55;transition:opacity .18s}
 .plate img{display:block;width:100%;height:auto}
 
 section{padding:88px 0 0}
@@ -172,14 +175,14 @@ footer .brand{font-size:15px}
     <p class="sub reveal">AppAtlas walks a whole application end to end, covering every screen, sub-tab, setting, and flow. You get screenshots, flow recordings, behavior specs, and a browsable atlas you can filter and share. Web and mobile.</p>
     <div class="cta reveal">
       <a class="btn primary" href="#install">Install the plugin</a>
-      <a class="btn secondary" href="https://github.com/sleepyw33kday/appatlas">★ Star on GitHub</a>
+      <a class="btn secondary" href="example/">Explore the live atlas ↗</a>
     </div>
   </div>
 
-  <div class="plate reveal">
-    <div class="bar"><i></i><i></i><i></i><span class="lbl">appatlas · browsable index</span></div>
+  <a class="plate reveal" href="example/" aria-label="Open the live example atlas">
+    <div class="bar"><i></i><i></i><i></i><span class="lbl">appatlas · browsable index</span><span class="open">Open live ↗</span></div>
     <img src="assets/hero-gallery-dark.png" alt="The AppAtlas browsable gallery: a filterable grid of 350 captured app screens beside a collapsible app-structure tree">
-  </div>
+  </a>
 
   <div class="scale">
     <div><b>350</b><span>screens in one run</span></div>
@@ -235,8 +238,9 @@ footer .brand{font-size:15px}
         <div class="pills reveal">
           <span class="pill">app tree</span><span class="pill">live search</span><span class="pill">lightbox</span><span class="pill">embedded specs</span><span class="pill">light + dark</span>
         </div>
+        <p class="reveal" style="margin-top:22px"><a class="btn secondary" href="example/">Explore the live atlas ↗</a></p>
       </div>
-      <img class="reveal" src="assets/filter-tree-light.png" alt="The atlas filtered to one section, showing its screens in a grid with the app-structure tree highlighting the active node">
+      <a href="example/" aria-label="Open the live example atlas" style="display:block;border-radius:14px;overflow:hidden;border:1px solid var(--line);transition:border-color .18s"><img class="reveal" style="display:block;border:0;border-radius:0" src="assets/filter-tree-light.png" alt="The atlas filtered to one section, showing its screens in a grid with the app-structure tree highlighting the active node"></a>
     </div>
   </section>
 
