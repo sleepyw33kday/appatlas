@@ -98,3 +98,23 @@ Observed on the reference crawl: section agents covered 13/13 sections yet still
 Audit agent prompt core: build a deduplicated feature inventory from (1) nav + sub-tabs, (2) every button/CTA/toggle/filter the specs mention, (3) the pricing feature matrix (each row is a product feature), (4) API/MCP docs. Verdict each: WALKED (exercised + evidenced) / SHALLOW (exists in a screenshot, own UI never opened) / INTENTIONALLY SKIPPED (destructive/payment/OAuth/quota — note reason) / MISSED. "The spec says the button exists" = SHALLOW, not WALKED. Output: coverage-matrix.md + top-10 fillable gaps.
 
 Orchestrator sweep checklist (browser): avatar menu (read hrefs via read_page — items often point to pages in NO sidebar), bell panel, ⌘K palette with a real query (note result grouping), every header action button's dialog (Generate/Export/Schedule), "Manage …" links inside filter dropdowns, setup/progress checklist popover, chat-widget launcher (open, don't message), and org-vs-project scoped route twins. Recapture formerly-empty dashboards (data latency).
+
+## Structured records + the enhanced viewer (tree / tags / structure / links / flows)
+
+The flat gallery is the floor, not the ceiling. The richer atlas is data-driven: every screen gets a JSON record and the viewer renders four surfaces from those records. This is what delivers a real tree, Mobbin-style indexable tags, a per-page structure read, and semantic links between pages.
+
+**Files:** `references/schema.md` (the per-screen record shape + field rules), `references/taxonomy.md` (the controlled vocabulary — page types, flows, pattern tags, element types, link/edge types), `references/build_atlas.py` (the generator).
+
+**Authoring is two-phase (see schema.md):**
+1. Each crawl agent writes `<section>/screens.json` — one record per screenshot — filling everything it can observe directly (hierarchy, pageType, features, elements, states, first-pass tags, summary, and *intra-section* links: tab→tab `tab-switch`, row/button→modal `opens-modal`, list→detail `navigates`). IDs are `"<section>/<screenshot-stem>"` so links resolve by id.
+2. One enrich agent (no browser) reads ALL sections' records + specs, normalizes tags/pageType/flows to the taxonomy (so the tag index stays coherent across sections and, later, across apps), and resolves the **cross-section links** that need the global view (a dashboard CTA into another section, an account-menu item that opens a settings page). Cross-app tag consistency is the whole point of the controlled vocab — it's what makes "show every paywall screen across every atlas" possible later.
+
+**Backfilling an existing crawl** (specs already written, no records yet): fan out per-section agents that read the section's `spec.md` + `ls screenshots/` and extract records — the spec prose already contains the elements/states/behavior, so it's an extraction + tagging task, fast for Sonnet. Keep any hand-authored sample records as the quality bar.
+
+**The generator** (`python3 references/build_atlas.py`, run from the crawl root) merges `*/screens.json` + `_artifact/thumbs/**` + `*/spec.md` and writes `_artifact/atlas.html`:
+- **Tree** — auto-built from `section/page/subtab/modal`, counts per node, click to filter.
+- **Tag rail** — faceted: Page types / Flows / Patterns / States, each a chip set with counts; OR within a facet, AND across facets; a search box over titles/tags/features/summary.
+- **Detail sheet** — per screen: the screenshot, page type, flows, states, route, summary, features, pattern tags, an elements table, and **Links out / Reached from** (typed edges with thumbnails, clickable to jump).
+- **Flows graph** — a per-flow node-link diagram (screens = nodes, `links` = edges, `back`/`related` dashed), laid out left-to-right by longest-path depth from entry screens; screens without a flow group by section.
+
+Same self-contained rules as the gallery builder (escape `</`, ASCII-safe payloads, theme tokens, smoke-test before publishing). The generator validates records: dangling `links.to` are dropped with a warning; missing thumbs skip with a warning; nothing fails silently.

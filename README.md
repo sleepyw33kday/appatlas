@@ -27,7 +27,12 @@ Documenting a product's full surface — for UX research, competitive teardowns,
 - **A folder tree** — one directory per app section, each with a `spec.md` behavior spec and a `screenshots/` set.
 - **Behavior specs** — every button, dropdown, filter, toggle, modal, empty state, and gated/upgrade screen, described in plain language.
 - **Flow recordings** — short GIFs of the key product moments (a record drill-down, a generation completing).
-- **A browsable atlas** — a single self-contained HTML page: a collapsible app-hierarchy tree (nav group → page → sub-tab → modal) that filters a searchable screenshot gallery, with each screen's spec one click away. Light + dark, no external dependencies.
+- **A browsable atlas** — a single self-contained HTML page with four ways in, all data-driven:
+  - an **auto-built tree** (nav group → page → sub-tab → modal)
+  - a **faceted, Mobbin-style tag rail** (page types, flows, UI patterns, states) that filters across the whole atlas and uses a controlled vocabulary so tags stay consistent as you crawl more apps
+  - a **structure panel** on every screen (page type, features, element inventory, states, tags)
+  - a **Flows graph** that wires screens together by semantic links (what opens a modal, navigates, switches a tab), laid out per product journey
+  Light + dark, no external dependencies.
 
 <table>
 <tr>
@@ -95,7 +100,10 @@ appatlas/
 ├── skills/appatlas/
 │   ├── SKILL.md             # the skill: phases, iron rules, blocker table, mobile lane
 │   └── references/
-│       └── playbook.md      # briefing template, capture workflow, index builder, coverage audit
+│       ├── playbook.md      # briefing template, capture workflow, coverage audit
+│       ├── schema.md        # per-screen record shape (tree / tags / structure / links)
+│       ├── taxonomy.md      # controlled vocab: page types, flows, UI-pattern tags, edge types
+│       └── build_atlas.py   # the enhanced viewer generator (tree + tags + structure + flow graph)
 ├── assets/                  # listing screenshots + demo GIF
 └── docs/                    # GitHub Pages landing page
 ```
