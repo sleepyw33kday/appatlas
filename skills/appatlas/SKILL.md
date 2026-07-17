@@ -1,6 +1,6 @@
 ---
 name: appatlas
-description: Use when asked to walk/crawl/tear down/document an entire app end to end — every screen, sub-tab, setting, and flow — with screenshots, flow recordings, behavior specs, and a browsable index. Works for web apps (Chrome MCP) and iOS/Android apps (simulator/emulator). Triggers - "app walk", "document this app", "full walkthrough", "teardown", "crawl the app", "Mobbin-style index", competitor/product research on a live SaaS.
+description: Use when asked to walk/crawl/tear down/document an entire app end to end — every screen, sub-tab, setting, and flow — into screenshots, flow recordings, behavior specs, and a browsable, tagged, linked atlas (tree + Mobbin-style tags + per-screen structure + a flow graph). Works for web apps (Chrome MCP) and iOS/Android apps (simulator/emulator). Triggers - "app walk", "document this app", "full walkthrough", "teardown", "crawl the app", "screen map", "map the user flows", "flow graph", "Mobbin-style index", competitor/product research on a live SaaS.
 ---
 
 # AppAtlas — map every screen of any app

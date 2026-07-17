@@ -65,14 +65,13 @@ Use a real brand/site the user owns as the monitored/imported subject — AI-ana
 - One fixer agent applies HIGH+MEDIUM (+cheap LOW) fixes and appends a "Fixes applied" log to each findings file. Orchestrator spot-checks the top findings landed, then rebuilds the index.
 - Orchestrator resolves conflicts reviewers can't (e.g. you know a dropdown was changed after the screenshot — you are the ground truth; correct the spec yourself).
 
-## Mobbin-style index (self-contained HTML)
+## The index — enhanced viewer (primary) vs gallery-only (fallback)
 
-Python builder pattern: walk `*/screenshots/*.jpg` → thumbnail via `sips -Z 700 -s format jpeg -s formatOptions 50` (≈25KB each; 280 thumbs ≈ 6–7MB, base64 ≈ +33%) → emit single HTML with:
-- Hand-authored app-hierarchy tree (nav group → page → sub-tab → modal), each node = `{label, section, filename-prefix}` so it filters the gallery by prefix.
-- Card grid (data-URI imgs, `loading="lazy"`), search box, section chips, click→lightbox, per-section spec text in a `<details>` panel (via embedded JSON).
-- Token-level light/dark theming (`:root` vars + `prefers-color-scheme` + `data-theme` overrides).
+**Default to the enhanced viewer** (`references/build_atlas.py`, driven by `screens.json` — see "Structured records + the enhanced viewer" below). It gives the auto-built tree, faceted tags, structure panel, and flow graph. Only fall back to the gallery-only builder if, for some reason, no structured records were produced.
 
-Pitfalls that WILL bite:
+**Gallery-only fallback** — thumbnail everything (`sips -Z 700 -s format jpeg -s formatOptions 50`, ≈25KB each; 280 thumbs ≈ 6–7MB, base64 ≈ +33%) and emit one self-contained HTML with: a HAND-authored app-hierarchy tree (each node `{label, section, filename-prefix}`, filters the gallery by prefix), a card grid (data-URI imgs, `loading="lazy"`), search, section chips, click→lightbox, and per-section spec text in a `<details>` panel. Token-level light/dark theming. (The enhanced viewer replaces the hand-authored tree with a data-built one; everything else is the same skeleton.)
+
+Pitfalls that WILL bite (BOTH builders — the enhanced viewer inherits every one):
 - Specs quoted into a `<script>` block: escape `</` as `<\/` in every JSON payload or an embedded `</script>` (e.g. a setup snippet in a spec) kills the page script.
 - Keep the template pure ASCII (json.dumps default escaping handles payloads; use `&mdash;`-style entities and CSS `\25B8` escapes in static text) — served-without-charset previews mojibake otherwise.
 - `<details><summary><button>` trees: a button's click handler with stopPropagation blocks expansion — explicitly set `details.open = true` when selecting a group node.
