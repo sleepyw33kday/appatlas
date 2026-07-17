@@ -434,7 +434,7 @@ function layoutGraph(nodes,visibleIds){
   const idset=new Set(nodes.map(n=>n.id));
   // edges within this group (ignore back/related for depth layering)
   const adj={},pre={},indeg={}; nodes.forEach(n=>{adj[n.id]=[];pre[n.id]=[];indeg[n.id]=0;});
-  nodes.forEach(n=>(n.links||[]).forEach(l=>{if(idset.has(l.to)&&l.type!=="back"&&l.type!=="related"){adj[n.id].push(l.to);pre[l.to].push(n.id);indeg[l.to]=(indeg[l.to]||0)+1;}}));
+  nodes.forEach(n=>(n.links||[]).forEach(l=>{if(idset.has(l.to)&&l.type!=="back"&&l.type!=="related"&&l.type!=="expands"){adj[n.id].push(l.to);pre[l.to].push(n.id);indeg[l.to]=(indeg[l.to]||0)+1;}}));
   // depth = longest path FROM an entry (indeg 0) node, so flow reads left -> right
   const depth={};
   function dfs(id,stk){if(depth[id]!=null)return depth[id];if(stk.has(id))return 0;stk.add(id);let d=0;pre[id].forEach(u=>{d=Math.max(d,1+dfs(u,stk));});stk.delete(id);return depth[id]=d;}
@@ -447,7 +447,7 @@ function layoutGraph(nodes,visibleIds){
   const wrap=el("div","gwrap"); wrap.style.width=W+"px"; wrap.style.height=H+"px";
   // edges svg
   const NS="http://www.w3.org/2000/svg"; const svg=document.createElementNS(NS,"svg"); svg.setAttribute("width",W);svg.setAttribute("height",H);
-  nodes.forEach(n=>(n.links||[]).forEach(l=>{ if(!pos[n.id]||!pos[l.to])return; const a=pos[n.id],b=pos[l.to]; const x1=a.x+150,y1=a.y+38,x2=b.x,y2=b.y+38; const p=document.createElementNS(NS,"path"); const mx=(x1+x2)/2; p.setAttribute("d","M"+x1+" "+y1+" C"+mx+" "+y1+" "+mx+" "+y2+" "+x2+" "+y2); if(l.type==="related"||l.type==="back")p.setAttribute("stroke-dasharray","4 4"); svg.appendChild(p); }));
+  nodes.forEach(n=>(n.links||[]).forEach(l=>{ if(!pos[n.id]||!pos[l.to])return; const a=pos[n.id],b=pos[l.to]; const x1=a.x+150,y1=a.y+38,x2=b.x,y2=b.y+38; const p=document.createElementNS(NS,"path"); const mx=(x1+x2)/2; p.setAttribute("d","M"+x1+" "+y1+" C"+mx+" "+y1+" "+mx+" "+y2+" "+x2+" "+y2); if(l.type==="related"||l.type==="back"||l.type==="expands")p.setAttribute("stroke-dasharray","4 4"); svg.appendChild(p); }));
   wrap.appendChild(svg);
   nodes.forEach(n=>{const g=el("div","gnode");g.style.left=pos[n.id].x+"px";g.style.top=pos[n.id].y+"px";g.innerHTML='<img src="data:image/jpeg;base64,'+IMG[n.id]+'"><div class="gl">'+esc(n.title)+'</div>';g.onclick=()=>openSheet(n.id);wrap.appendChild(g);});
   return wrap;

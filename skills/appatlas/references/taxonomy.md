@@ -49,6 +49,7 @@ Marketing surfaces: `hero` · `cta` · `footer` · `faq`
 - `opens-modal` — a control that opens a modal/dialog screen.
 - `opens-drawer` — opens a side drawer / bottom sheet.
 - `opens-menu` — opens a menu/popover that itself is a captured screen.
+- `expands` — inline expand-in-place (an accordion/chevron row that reveals more on the SAME screen), or a same-screen state transition after an action (a form submit that swaps the panel content). Not a true overlay, so distinct from `opens-modal`/`opens-drawer`. Rendered dashed and ignored for graph layout.
 - `cta` — a primary call-to-action that jumps into another flow (e.g. dashboard "Generate Report" → report dialog).
 - `back` — returns to a parent/previous screen.
 - `sub-page` — a hierarchical child (page → its detail/settings sub-page).
