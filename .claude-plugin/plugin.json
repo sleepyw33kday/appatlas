@@ -1,0 +1,13 @@
+{
+  "name": "appatlas",
+  "description": "Map every screen of any app. Automated end-to-end walkthroughs of web and iOS/Android apps: screenshots, flow recordings, behavior specs, and a Mobbin-style browsable atlas — orchestrated with subagents.",
+  "version": "1.0.0",
+  "author": {
+    "name": "sleepyw33kday",
+    "url": "https://github.com/sleepyw33kday"
+  },
+  "homepage": "https://sleepyw33kday.github.io/appatlas/",
+  "repository": "https://github.com/sleepyw33kday/appatlas",
+  "license": "MIT",
+  "keywords": ["app-walkthrough", "teardown", "ux-research", "screenshots", "documentation", "browser-automation", "ios", "android", "mobbin", "competitive-analysis"]
+}

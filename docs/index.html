@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppAtlas — map every screen of any app</title>
+<meta name="description" content="A Claude Code skill and plugin that walks any web or mobile app end to end and produces a browsable atlas: screenshots, flow recordings, and behavior specs.">
+<meta property="og:title" content="AppAtlas — map every screen of any app">
+<meta property="og:description" content="Automated end-to-end app walkthroughs: screenshots, flow recordings, behavior specs, and a Mobbin-style browsable atlas.">
+<meta property="og:image" content="assets/hero-gallery-dark.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* atlas — deep chart ink + a single survey-orange signal */
+  --bg:#0D1216; --panel:#151C22; --panel-2:#101720; --ink:#ECEFF2; --muted:#98A4AF;
+  --line:#232E37; --accent:#F0663C; --accent-ink:#160A05; --grid:rgba(240,102,60,.10);
+  --sans:"Schibsted Grotesk",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --z-nav:100;
+}
+@media (prefers-color-scheme: light){:root{
+  --bg:#F3F4F2; --panel:#FFFFFF; --panel-2:#FAFAF8; --ink:#151A1E; --muted:#57616A;
+  --line:#E1E4E1; --accent:#BC461F; --accent-ink:#FFFFFF; --grid:rgba(188,70,31,.08);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* faint topographic contour field */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 78% -10%, var(--grid), transparent 55%),
+    repeating-radial-gradient(circle at 82% 4%, transparent 0 38px, var(--grid) 38px 39px);
+  mask:linear-gradient(180deg,#000 0 32%, transparent 62%)}
+.mono{font-family:var(--mono)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* legend-style small label */
+.tag{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.02em;color:var(--accent);
+  display:inline-flex;align-items:center;gap:8px}
+.tag::before{content:"";width:7px;height:7px;background:var(--accent);border-radius:2px;transform:rotate(45deg)}
+
+header.nav{position:sticky;top:0;z-index:var(--z-nav);display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0;backdrop-filter:blur(10px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid transparent;transition:border-color .3s}
+header.nav.stuck{border-color:var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand .m{font-family:var(--mono);font-weight:600;color:var(--accent)}
+.nav nav a{color:var(--muted);font-size:14px;margin-left:22px;font-weight:500}
+.nav nav a:hover{color:var(--ink);text-decoration:none}
+@media(max-width:620px){.nav nav a:not(.gh){display:none}}
+
+.hero{padding:74px 0 20px;max-width:52rem}
+.hero .tag{margin-bottom:26px}
+h1{font-size:clamp(42px,7vw,74px);line-height:.98;letter-spacing:-.035em;font-weight:800;margin:0 0 22px;
+  text-wrap:balance;color:var(--ink)}
+h1 .swap{color:var(--accent)}
+.sub{font-size:clamp(17px,2.3vw,20px);color:var(--muted);max-width:56ch;margin:0 0 32px;text-wrap:pretty}
+.cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 22px;border-radius:10px;font-weight:600;
+  font-size:15px;border:1px solid transparent;font-family:var(--sans);cursor:pointer;transition:transform .15s cubic-bezier(.2,.8,.2,1),filter .15s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08);text-decoration:none}
+.btn.secondary{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.secondary:hover{border-color:var(--accent);text-decoration:none}
+
+/* map-scale strip */
+.scale{display:flex;flex-wrap:wrap;gap:0;margin:40px 0 0;border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;background:var(--panel)}
+.scale div{flex:1 1 150px;padding:16px 18px;border-right:1px solid var(--line)}
+.scale div:last-child{border-right:0}
+.scale b{display:block;font-family:var(--mono);font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.scale span{font-size:13px;color:var(--muted)}
+
+/* framed screenshot plate */
+.plate{margin-top:44px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel-2);
+  box-shadow:0 30px 90px -46px rgba(0,0,0,.7)}
+.plate .bar{display:flex;align-items:center;gap:7px;padding:11px 15px;border-bottom:1px solid var(--line);background:var(--panel)}
+.plate .bar i{width:11px;height:11px;border-radius:50%;background:var(--line);display:block}
+.plate .bar .lbl{margin-left:10px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.plate img{display:block;width:100%;height:auto}
+
+section{padding:88px 0 0}
+.shead{max-width:60ch;margin-bottom:40px}
+.shead .tag{margin-bottom:16px}
+h2{font-size:clamp(28px,4.4vw,42px);letter-spacing:-.025em;font-weight:700;margin:0 0 12px;text-wrap:balance;line-height:1.05}
+.lead{color:var(--muted);font-size:17px;margin:0;text-wrap:pretty}
+
+/* features as a MAP LEGEND — asymmetric, mono markers, no cards-with-emoji */
+.legend{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  grid-template-columns:repeat(6,1fr)}
+.entry{background:var(--panel);padding:26px 24px;display:flex;flex-direction:column;gap:9px}
+.entry.wide{grid-column:span 4} .entry.half{grid-column:span 3} .entry.third{grid-column:span 2}
+@media(max-width:820px){.legend{grid-template-columns:1fr 1fr}
+  .entry.wide,.entry.half,.entry.third{grid-column:span 1}}
+@media(max-width:520px){.legend{grid-template-columns:1fr}.entry.wide,.entry.half,.entry.third{grid-column:span 1}}
+.entry .mk{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+.entry h3{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em}
+.entry p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.55}
+.entry.wide p{font-size:15.5px;max-width:44ch}
+
+/* split showcase */
+.split{display:grid;gap:34px;grid-template-columns:1fr 1fr;align-items:center;margin-top:44px}
+.split.flip>div:first-child{order:2}
+@media(max-width:780px){.split{grid-template-columns:1fr}.split.flip>div:first-child{order:0}}
+.split img{width:100%;border:1px solid var(--line);border-radius:14px;display:block}
+.split .pills{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);
+  border-radius:7px;padding:5px 11px;background:var(--panel)}
+
+/* how it works — a genuine ordered route, so the numbers are earned */
+.route{margin-top:40px;display:grid;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.stop{display:grid;grid-template-columns:70px 1fr;gap:0;border-bottom:1px solid var(--line);background:var(--panel)}
+.stop:last-child{border-bottom:0}
+.stop .n{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--accent);padding:22px 0 0 24px;
+  border-right:1px solid var(--line)}
+.stop .b{padding:20px 24px}
+.stop .b b{display:block;font-size:17px;font-weight:600;margin-bottom:3px;letter-spacing:-.01em}
+.stop .b span{color:var(--muted);font-size:14.5px;text-wrap:pretty}
+
+/* install */
+.two{display:grid;gap:20px;grid-template-columns:1fr 1fr;margin-top:8px}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+.two h3{font-size:15px;font-weight:600;margin:0 0 12px;font-family:var(--mono);color:var(--muted);letter-spacing:.02em}
+pre{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;
+  font-family:var(--mono);font-size:13.5px;line-height:1.7;margin:0;color:var(--ink)}
+pre .c{color:var(--muted)}
+pre .a{color:var(--accent)}
+.ask{margin-top:34px}
+.ask pre{background:var(--panel);border-style:dashed}
+.note{color:var(--muted);font-size:13.5px;margin-top:14px;max-width:70ch}
+
+footer{margin-top:96px;border-top:1px solid var(--line);padding:30px 0 48px;color:var(--muted);font-size:14px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center}
+footer .brand{font-size:15px}
+
+/* entrance is additive: content is visible by default, keyframes only enhance */
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.hero .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) backwards}
+.hero h1.reveal{animation-delay:.02s}
+.hero .sub.reveal{animation-delay:.10s}
+.hero .cta.reveal{animation-delay:.18s}
+.hero .scale.reveal{animation-delay:.26s}
+.plate.reveal{animation:rise .8s cubic-bezier(.2,.7,.2,1) .34s backwards}
+@media (prefers-reduced-motion: reduce){
+  .hero .reveal,.plate.reveal{animation:none}
+  header.nav{backdrop-filter:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 24px">
+    <div class="brand">App<span class="m">Atlas</span></div>
+    <nav>
+      <a href="#legend">Features</a>
+      <a href="#route">How it works</a>
+      <a href="#install">Install</a>
+      <a class="gh" href="https://github.com/sleepyw33kday/appatlas">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <span class="tag mono">CLAUDE CODE · SKILL &amp; PLUGIN</span>
+    <h1 class="reveal">Map every screen<br>of <span class="swap">any app.</span></h1>
+    <p class="sub reveal">AppAtlas walks a whole application end to end, covering every screen, sub-tab, setting, and flow. You get screenshots, flow recordings, behavior specs, and a browsable atlas you can filter and share. Web and mobile.</p>
+    <div class="cta reveal">
+      <a class="btn primary" href="#install">Install the plugin</a>
+      <a class="btn secondary" href="https://github.com/sleepyw33kday/appatlas">★ Star on GitHub</a>
+    </div>
+    <div class="scale reveal">
+      <div><b>350</b><span>screens in one run</span></div>
+      <div><b>13</b><span>sections mapped</span></div>
+      <div><b>web + app</b><span>iOS, Android</span></div>
+      <div><b>1 file</b><span>self-contained atlas</span></div>
+    </div>
+  </div>
+
+  <div class="plate reveal">
+    <div class="bar"><i></i><i></i><i></i><span class="lbl">appatlas · browsable index</span></div>
+    <img src="assets/hero-gallery-dark.png" alt="The AppAtlas browsable gallery: a filterable grid of 350 captured app screens beside a collapsible app-structure tree">
+  </div>
+
+  <section id="legend">
+    <div class="shead">
+      <span class="tag mono">THE LEGEND</span>
+      <h2 class="reveal">Not a pile of screenshots. A structured atlas.</h2>
+      <p class="lead reveal">Every section gets a behavior spec covering each control, empty state, and gated screen, cross-linked to the exact captures. Read it like a map key.</p>
+    </div>
+    <div class="legend reveal">
+      <div class="entry wide">
+        <span class="mk">A · ATLAS</span>
+        <h3>One browsable index</h3>
+        <p>A single self-contained HTML page: a collapsible app-hierarchy tree (nav group, page, sub-tab, modal) that filters a searchable screenshot gallery, with every screen's spec one click away. Light and dark, zero dependencies.</p>
+      </div>
+      <div class="entry third">
+        <span class="mk">B · COVER</span>
+        <h3>Complete coverage</h3>
+        <p>Every nav item, dropdown, and little setting, audited at the feature level so nothing hides in a menu.</p>
+      </div>
+      <div class="entry third">
+        <span class="mk">C · SPEC</span>
+        <h3>Behavior specs</h3>
+        <p>What each button does, what options exist, how the UI responds. Not just what it looks like.</p>
+      </div>
+      <div class="entry third">
+        <span class="mk">D · REC</span>
+        <h3>Flow recordings</h3>
+        <p>Short GIFs of the key product moments, captured as the crawl exercises them.</p>
+      </div>
+      <div class="entry third">
+        <span class="mk">E · CREW</span>
+        <h3>Subagent crew</h3>
+        <p>A fleet of Claude subagents crawl in parallel where safe, sequential where they would collide.</p>
+      </div>
+      <div class="entry third">
+        <span class="mk">F · SAFE</span>
+        <h3>Safe on live accounts</h3>
+        <p>No payment data, no destructive actions. Paid checkouts hand back to you; trials it starts, it can cancel.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div>
+        <span class="tag mono">NAVIGATE</span>
+        <h2 class="reveal" style="margin-top:16px">Filter it like a chart table.</h2>
+        <p class="lead reveal">The app's real structure becomes a collapsible tree: nav group, page, sub-tab, modal. Click a node to filter the gallery, search across every screen, and pop any capture into a lightbox with its spec beside it.</p>
+        <div class="pills reveal">
+          <span class="pill">app tree</span><span class="pill">live search</span><span class="pill">lightbox</span><span class="pill">embedded specs</span><span class="pill">light + dark</span>
+        </div>
+      </div>
+      <img class="reveal" src="assets/filter-tree-light.png" alt="The atlas filtered to one section, showing its screens in a grid with the app-structure tree highlighting the active node">
+    </div>
+  </section>
+
+  <section>
+    <div class="split flip">
+      <div>
+        <span class="tag mono">RECORD</span>
+        <h2 class="reveal" style="margin-top:16px">Key moments, captured on the way through.</h2>
+        <p class="lead reveal">A record drill-down, a generation completing: the moments worth watching become short GIFs during the crawl, not a manual re-run afterward.</p>
+      </div>
+      <img class="reveal" src="assets/demo-flow.gif" alt="A recorded flow: opening a response, viewing its detail, toggling brand-name highlighting, and switching to citations">
+    </div>
+  </section>
+
+  <section id="route">
+    <div class="shead">
+      <span class="tag mono">THE ROUTE</span>
+      <h2 class="reveal">How a walk runs</h2>
+      <p class="lead reveal">An orchestration pattern, not just a prompt, with a blocker playbook for the things that derail automated crawls.</p>
+    </div>
+    <div class="route reveal">
+      <div class="stop"><div class="n">01</div><div class="b"><b>Recon</b><span>Claude signs in, walks onboarding capturing every step, maps the full navigation, and writes an agent briefing plus a folder skeleton.</span></div></div>
+      <div class="stop"><div class="n">02</div><div class="b"><b>Crawl</b><span>One subagent per section, sequential per UI surface (a browser tab or a simulator is shared, so parallel agents would fight over it). Each captures and specs its section.</span></div></div>
+      <div class="stop"><div class="n">03</div><div class="b"><b>Review, fix, coverage audit</b><span>Parallel QA agents verify every screenshot against its spec, then a feature-level audit fills the gaps that hide in menus, dialogs, and scoped route twins.</span></div></div>
+      <div class="stop"><div class="n">04</div><div class="b"><b>Atlas</b><span>A generator assembles the self-contained browsable index, the thing you actually share.</span></div></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="shead">
+      <span class="tag mono">SET OUT</span>
+      <h2 class="reveal">Install</h2>
+      <p class="lead reveal">This repo is its own Claude Code plugin marketplace.</p>
+    </div>
+    <div class="two reveal">
+      <div>
+        <h3># as a plugin</h3>
+<pre><span class="c"># add this repo as a marketplace</span>
+/plugin marketplace add <span class="a">sleepyw33kday/appatlas</span>
+<span class="c"># install it</span>
+/plugin install <span class="a">appatlas@appatlas</span></pre>
+      </div>
+      <div>
+        <h3># as a skill (manual)</h3>
+<pre>git clone https://github.com/sleepyw33kday/appatlas
+cp -r appatlas/skills/appatlas \
+  ~/.claude/skills/appatlas</pre>
+      </div>
+    </div>
+    <div class="ask reveal">
+      <h3 style="font-family:var(--mono);color:var(--muted);font-size:15px;margin:0 0 12px"># then just ask</h3>
+<pre>Do an appatlas of https://app.example.com. Document every
+screen and setting, screenshots plus specs, and give me a
+browsable index.</pre>
+      <p class="note">Requires Claude Code with the Claude-in-Chrome tools for web apps; Xcode and a simulator (idb) or an Android emulator (adb) for mobile.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="brand">App<span class="m">Atlas</span> · MIT</div>
+  <div><a href="https://github.com/sleepyw33kday/appatlas">GitHub</a> · built with <a href="https://claude.com/claude-code">Claude Code</a></div>
+</footer>
+
+<script>
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('stuck',scrollY>8),{passive:true});
+const io=new IntersectionObserver((es)=>{es.forEach((e,i)=>{if(e.isIntersecting){
+  setTimeout(()=>e.target.classList.add('in'),(i%4)*70);io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

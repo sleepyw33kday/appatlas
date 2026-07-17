@@ -1,0 +1,23 @@
+{
+  "name": "appatlas",
+  "owner": {
+    "name": "sleepyw33kday",
+    "url": "https://github.com/sleepyw33kday"
+  },
+  "metadata": {
+    "description": "AppAtlas — automated end-to-end app walkthroughs and teardowns",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "appatlas",
+      "source": "./",
+      "description": "Map every screen of any app: automated walkthroughs of web and mobile apps producing screenshots, flow recordings, behavior specs, and a Mobbin-style browsable atlas.",
+      "version": "1.0.0",
+      "author": { "name": "sleepyw33kday" },
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": ["app-walkthrough", "teardown", "ux-research", "documentation"]
+    }
+  ]
+}
