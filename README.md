@@ -14,6 +14,10 @@ Works on **web apps** (via the Claude-in-Chrome tools) and **iOS / Android apps*
 
 ![AppAtlas gallery](assets/hero-gallery-dark.png)
 
+**[▶ Explore the live atlas](https://sleepyw33kday.github.io/appatlas/example/)** — 350 real screens, tagged and linked.
+
+![Exploring an AppAtlas: open a screen's structure, filter by tag, switch to the flow graph](assets/appatlas-demo.gif)
+
 </div>
 
 ---
